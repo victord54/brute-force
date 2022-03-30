@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <string.h>
 
 #include "fonction_bases.h"
 
@@ -34,6 +35,13 @@ int main(int argc, char *argv[]) {
     }
     char buffer[1024];
     sprintf(buffer, "indice_max = %.8f avec %s\n%s\n\n", indice_max, clef_associee, meilleur_message);
-    printf("%s", buffer);
+    // printf("%s", buffer); // Debug
+
+     /* Résultats dans fichier */
+     char *nom_fichier = "res_"; // Ca marche tjrs pas mais faut ajouter la lettre et le txt à la fin.
+     printf(" nom du fichier : %s\n", nom_fichier);
+     // int desc = open(nom_fichier, O_RDWR | O_CREAT);
+
+    // write(desc, buffer, 1);
     return 0;
 }
