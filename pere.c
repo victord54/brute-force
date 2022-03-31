@@ -27,5 +27,7 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+
+    // lire les fichiers et récup le max.
     return 0;
 }
