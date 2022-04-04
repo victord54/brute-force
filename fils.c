@@ -32,11 +32,11 @@ int main(int argc, char *argv[]) {
             indice_max = indice_tmp;
             clef_associee = clef;
             meilleur_message = message_decrypte;
-            printf("(%s --- %s = %f)\n", message_decrypte, clef, indice_tmp);
+            // printf("(%s --- %s = %f)\n", message_decrypte, clef, indice_tmp); // debug
         }
     }
     char buffer[10000];
-    sprintf(buffer, "%.5f\n%s\n%s", indice_max, clef_associee, meilleur_message);
+    sprintf(buffer, "%.9f\n%s\n%s", indice_max, clef_associee, meilleur_message);
     int taille_buffer = 0;
     i = 0;
     while (buffer[i] != '\0') {
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
 
      /* Résultats dans fichier */
     char *nom_fichier = malloc(sizeof(char) * 14);
-    char *nom_fixe = "out/res_"; // Ca marche tjrs pas mais faut ajouter la lettre et le txt à la fin.
+    char *nom_fixe = "out/res_";
     char *lettre_var = malloc(sizeof(char) * 2);
     lettre_var[0] = argv[2][0]; lettre_var[1] = '\0';
     strcat(nom_fichier, nom_fixe);
@@ -59,5 +59,6 @@ int main(int argc, char *argv[]) {
 
     write(desc, &buffer, taille_buffer);
     close(desc);
+    exit(0);
     return 0;
 }
