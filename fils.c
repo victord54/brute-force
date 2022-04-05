@@ -28,14 +28,14 @@ int main(int argc, char *argv[]) {
         char *message_decrypte = malloc(sizeof(char)*taille_message);
         decryptage(message, message_decrypte, clef, taille_clef);
         float indice_tmp = indice_de_coincidence(message_decrypte);
+        printf("(%s --- %s = %f)\n", message_decrypte, clef, indice_tmp); // debug
         if (indice_tmp > indice_max) {
             indice_max = indice_tmp;
             clef_associee = clef;
             meilleur_message = message_decrypte;
-            // printf("(%s --- %s = %f)\n", message_decrypte, clef, indice_tmp); // debug
         }
     }
-    char buffer[10000];
+    char buffer[500];
     sprintf(buffer, "%.9f\n%s\n%s", indice_max, clef_associee, meilleur_message);
     int taille_buffer = 0;
     i = 0;

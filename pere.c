@@ -13,6 +13,14 @@ int main(int argc, char *argv[]) {
     int status;
     pid_t fils;
 
+    char *fichier = argv[1];
+
+    int desc = open(fichier, O_RDONLY);
+    char *texte = malloc(sizeof(char) * 434);
+    read(desc, texte, 434);
+
+    printf("%s\n", texte);
+    close(desc);
     if (argc < 2) {
         printf("Arguments manquants\n");
         exit(-1);
@@ -27,7 +35,7 @@ int main(int argc, char *argv[]) {
             perror("Création impossible\n");
             exit(-1);
         } else if (fils == 0) {
-            if (execl("./fils", "fils", argv[1], lettre, NULL) == -1) {
+            if (execl("./fils", "fils", texte, lettre, NULL) == -1) {
                 perror("Recouvrement impossible");
                 exit(-1);
             }
@@ -65,6 +73,6 @@ int main(int argc, char *argv[]) {
             close(desc);
         }
     }
-    printf("Clef : %s\nmessage : %s\n", clef_finale, buffer_max);
+    // printf("Clef : %s\nmessage : %s\n", clef_finale, buffer_max);
     return 0;
 }
