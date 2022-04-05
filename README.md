@@ -1,2 +1,2 @@
 # brute-force
-Programme avec fork pour dechiffrer un message avec une clé Vigénère de 2 caractères.
+Programme en c avec fork() et execl() pour déchiffrer un message avec une clé Vigénère de 2 caractères.
