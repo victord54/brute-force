@@ -10,55 +10,54 @@
 #include "fonction_bases.h"
 
 int main(int argc, char *argv[]) {
-    char lettre = argv[2][0];
     char *message = argv[1];
-    int taille_message = 0, i = 0;
-    while (message[i] != '\0') {
-        taille_message++;
-        i++;
-    }
-    taille_message++; // Pour le caractère '\0'
-    float indice_max = 0.;
-    char *clef_associee = "aa";
-    char *meilleur_message = malloc(sizeof(char)*taille_message);
+    int taille_message = strlen(message);
+
+    char *lettre = argv[2];
+
+    char *clef = malloc(sizeof(char)*2);
+
+    float meilleur_indice = 0.0;
+    char *meilleure_clef = malloc(sizeof(char)*2);
+    char *meilleur_message = malloc(sizeof(char) * taille_message);
+
     for (int i = 'a'; i <= 'z'; i++) {
-        char *clef = malloc(sizeof(char)*3);
-        sprintf(clef, "%c%c",lettre, i);
-        int taille_clef = 2;
-        char *message_decrypte = malloc(sizeof(char)*taille_message);
-        decryptage(message, message_decrypte, clef, taille_clef);
-        float indice_tmp = indice_de_coincidence(message_decrypte);
-        printf("(%s --- %s = %f)\n", message_decrypte, clef, indice_tmp); // debug
-        if (indice_tmp > indice_max) {
-            indice_max = indice_tmp;
-            clef_associee = clef;
-            meilleur_message = message_decrypte;
+        sprintf(clef, "%s%c",lettre, i);
+        char *message_dechiffre = malloc(sizeof(char)*taille_message);
+        decryptage(message, message_dechiffre, clef, 2);
+        float indice_actuel = indice_de_coincidence(message_dechiffre);
+        // printf("(%s --- %s = %.15f)\n", message_dechiffre, clef, indice_actuel); fflush(stdout); // debug
+        
+        // Comparaison des indices de co.
+        if (indice_actuel > meilleur_indice) {
+            meilleur_indice = indice_actuel;
+            strcpy(meilleure_clef, clef);
+            strcpy(meilleur_message, message_dechiffre);
         }
     }
-    char buffer[500];
-    sprintf(buffer, "%.9f\n%s\n%s", indice_max, clef_associee, meilleur_message);
-    int taille_buffer = 0;
-    i = 0;
-    while (buffer[i] != '\0') {
-        taille_buffer++;
-        i++;
-    }
-    // printf("%s", buffer); // debug
 
-     /* Résultats dans fichier */
-    char *nom_fichier = malloc(sizeof(char) * 14);
+    // printf("message: %s\nclef: %s et indice: %f\n", meilleur_message, meilleure_clef, meilleur_indice); fflush(stdout);
+
+    /* Résultats dans fichier */
+    char *nom_fichier = malloc(sizeof(char) * 13);
     char *nom_fixe = "out/res_";
-    char *lettre_var = malloc(sizeof(char) * 2);
-    lettre_var[0] = argv[2][0]; lettre_var[1] = '\0';
     strcat(nom_fichier, nom_fixe);
-    strcat(nom_fichier, lettre_var);
+    strcat(nom_fichier, lettre);
     strcat(nom_fichier, ".txt");
-    mkdir("out", 00777);
-    // printf("nom du fichier : %s\n", nom_fichier); // debug
-    int desc = open(nom_fichier, O_WRONLY|O_CREAT, 00777);
 
-    write(desc, &buffer, taille_buffer);
+    // printf("nom fichier: %s\n", nom_fichier); fflush(stdout); // debug
+
+    mkdir("out", 00777);
+    int desc = open(nom_fichier, O_WRONLY|O_CREAT, 00777);
+    char *meilleur_indice_str = malloc(sizeof(char) * 17);
+    sprintf(meilleur_indice_str, "%.15f", meilleur_indice);
+    write(desc, meilleur_indice_str, strlen(meilleur_indice_str));
+    write(desc, "\n", 1);
+    
+    write(desc, meilleure_clef, 2);
+    write(desc, "\n", 1);
+
+    write(desc, meilleur_message, strlen(meilleur_message));
     close(desc);
     exit(0);
-    return 0;
 }

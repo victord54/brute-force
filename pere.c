@@ -10,17 +10,24 @@
 #include "fonction_bases.h"
 
 int main(int argc, char *argv[]) {
-    int status;
     pid_t fils;
-
+    struct stat sb;
     char *fichier = argv[1];
 
-    int desc = open(fichier, O_RDONLY);
-    char *texte = malloc(sizeof(char) * 434);
-    read(desc, texte, 434);
+    if (stat(fichier, &sb) == -1) {
+        perror("Erreur stat");
+        exit(-1);
+    }
 
-    printf("%s\n", texte);
+    int taille = sb.st_size;
+
+    int desc = open(fichier, O_RDONLY);
+
+    char *message = malloc(sizeof(char) * taille);
+
+    read(desc, message, taille);
     close(desc);
+
     if (argc < 2) {
         printf("Arguments manquants\n");
         exit(-1);
@@ -35,44 +42,42 @@ int main(int argc, char *argv[]) {
             perror("Création impossible\n");
             exit(-1);
         } else if (fils == 0) {
-            if (execl("./fils", "fils", texte, lettre, NULL) == -1) {
+            fflush(stdout);
+            if (execl("./fils", "fils", message, lettre, NULL) == -1) {
                 perror("Recouvrement impossible");
                 exit(-1);
             }
+        } else {
+            wait(NULL);
         }
     }
-    sleep(1); // sinon la boucle du dessous ne récupère pas tout !
-    printf("\n");
-    while (wait(&status) != fils) {
-        printf("...");
-        fflush(stdout);
-    }
-    printf("\n");
-    float ind_max = 0, ind_tmp = 0;
-    char *buffer_max = malloc(sizeof(char) * 10000);
-    char *clef_finale = malloc(sizeof(char) * 3);
-    for (int i = 'a'; i <= 'z'; i++) {
-        char *buffer = malloc(sizeof(char) * 10000);
-        char *nom_fichier = malloc(sizeof(char) * 14);
-        char *nom_fixe = "out/res_";
-        char *lettre_var = malloc(sizeof(char) * 2);
-        lettre_var[0] = i; lettre_var[1] = '\0';
-        strcat(nom_fichier, nom_fixe);
-        strcat(nom_fichier, lettre_var);
-        strcat(nom_fichier, ".txt");
+    char *nom_fichier = malloc(sizeof(char) * 13);
+    float meilleur_indice = 0.0;
+    char *meilleure_clef = malloc(sizeof(char)*2);
+    char *meilleur_message = malloc(sizeof(char) * taille);
+    for (int i = 'g'; i <= 'i'; i++) {
+        float indice = 0.0;
+        char *indice_str = malloc(sizeof(char) * 17);
+        char *clef = malloc(sizeof(char)*2);
+        char *message = malloc(sizeof(char) * taille);
+        sprintf(nom_fichier, "out/res_%c.txt", i);
+        // printf("nom_fichier: %s\n", nom_fichier); // debug
         int desc = open(nom_fichier, O_RDONLY);
-        read(desc, buffer, 11);
-        ind_tmp = atof(buffer);
-        if (ind_tmp > ind_max) {
-            ind_max = ind_tmp;
-            read(desc, buffer_max, 1); // Pour enlever le saut de ligne
-            read(desc, clef_finale, 2); // Stocker la clé
-            clef_finale[2] = '\0';
-            read(desc, buffer_max, 1); // Pour enlever le saut de ligne
-            read(desc, buffer_max, 10000);
-            close(desc);
+        read(desc, indice_str, 17);
+        read(desc, clef, 1); // juste pour lire le saut de ligne dans le vide
+        read(desc, clef, 2);
+        read(desc, message, 1); // juste pour lire le saut de ligne dans le vide
+        read(desc, message, taille);
+        close(desc);
+        indice = indice_de_coincidence(message);
+        if (indice > meilleur_indice) {
+            meilleur_indice = indice;
+            strcpy(meilleure_clef, clef);
+            strcpy(meilleur_message, message);
         }
     }
-    // printf("Clef : %s\nmessage : %s\n", clef_finale, buffer_max);
+
+    printf("clef la plus probable: %s\n", meilleure_clef);
+    printf("message le plus probable:\n\t %s\n", meilleur_message);
     return 0;
 }

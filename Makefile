@@ -1,11 +1,8 @@
 all: pere fils
 
-exec: pere fils
-	./pere "Zjzj qojlv ruf k'bine df uovtfs mfs fprdet"
-
-pere: pere.c
+pere: pere.c fonction_bases.o
 	@echo "Compilation du pere ..."
-	@gcc $< -o pere
+	@gcc $^ -o pere
 
 fils: fils.c fonction_bases.o
 	@echo "Compilation du fils ..."
