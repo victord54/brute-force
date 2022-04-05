@@ -1,2 +1,2 @@
 # brute-force
-Programme avec fork pour décrypter un message chiffré avec une clé Vigénère de 2 caractères.
+Programme avec fork pour dechiffrer un message avec une clé Vigénère de 2 caractères.
