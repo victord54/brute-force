@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    printf("clef la plus probable: %s\n", meilleure_clef);
+    printf("clef la plus probable: %s avec l'indice: %f\n", meilleure_clef, meilleur_indice);
     printf("message le plus probable:\n\t %s\n", meilleur_message);
     return 0;
 }
